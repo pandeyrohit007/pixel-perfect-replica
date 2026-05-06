@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { MapPin, IndianRupee } from "lucide-react";
+import { MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/projects")({
   head: () => ({
@@ -18,37 +18,80 @@ interface Project {
   name: string;
   client: string;
   location: string;
-  value?: string;
   category: Exclude<Category, "All">;
   status?: "Completed" | "In Progress";
+  image: string;
 }
 
-const projects: Project[] = [
-  { name: "Kashi Railway Station Redevelopment", client: "Indian Railways", location: "Kashi, U.P.", value: "₹304.61 Cr", category: "Railway", status: "In Progress" },
-  { name: "Jalna Railway Station", client: "Indian Railways", location: "Jalna, Maharashtra", value: "₹189.04 Cr", category: "Railway", status: "In Progress" },
-  { name: "Aurangabad Railway Station", client: "Indian Railways", location: "Aurangabad, Maharashtra", value: "₹189.04 Cr", category: "Railway", status: "In Progress" },
-  { name: "Major Bridges 466/468/469 across Gomti", client: "Northern Railway", location: "Lucknow, U.P.", value: "₹58.30 Cr", category: "Roads & Bridges", status: "In Progress" },
-  { name: "SN Medical College", client: "UPPWD", location: "Agra, U.P.", value: "₹335.21 Cr", category: "Buildings", status: "In Progress" },
-  { name: "Veerangna Uda Devi Women Police Battalion", client: "UPPWD", location: "Lucknow, U.P.", value: "₹238.02 Cr", category: "Institutional", status: "In Progress" },
-  { name: "State Fire-Fighting College", client: "UPPWD", location: "Unnao, U.P.", value: "₹176.45 Cr", category: "Institutional", status: "In Progress" },
-  { name: "500-bed Advance Pediatric Center, SGPGI", client: "UPPWD", location: "Lucknow, U.P.", value: "₹142.46 Cr", category: "Buildings", status: "In Progress" },
-  { name: "High Court Judges Residences", client: "UPPWD", location: "Lucknow & Prayagraj", value: "₹109.92 Cr", category: "Buildings", status: "In Progress" },
-  { name: "Passenger Terminal Building, ICP Sunauli", client: "Land Ports Authority of India", location: "Sunauli, U.P.", value: "₹82.65 Cr", category: "Institutional", status: "Completed" },
-  { name: "MBBS & Nursing Hostel, Dr RMLIMS", client: "UPPWD", location: "Lucknow, U.P.", value: "₹78.72 Cr", category: "Buildings", status: "Completed" },
-  { name: "Pratapgarh Bypass", client: "UPPWD", location: "Pratapgarh, U.P.", value: "₹76.01 Cr", category: "Roads & Bridges", status: "Completed" },
-  { name: "Widening to Four-Lane CC Road", client: "UPPWD", location: "Pratapgarh, U.P.", value: "₹147.74 Cr", category: "Roads & Bridges", status: "Completed" },
-  { name: "Government Medical College", client: "UPRNN Ltd.", location: "Basti, U.P.", value: "₹136.32 Cr", category: "Buildings", status: "Completed" },
-  { name: "Siddharthnagar University, Kapilvastu", client: "UPRNN Ltd.", location: "Siddharthnagar, U.P.", value: "₹49.93 Cr", category: "Buildings", status: "Completed" },
-  { name: "High Court Conference Hall, VVIP Suite & Museum", client: "C&DS, UP Jal Nigam", location: "Prayagraj, U.P.", value: "₹37.55 Cr", category: "Institutional", status: "Completed" },
-  { name: "Bank of India Zonal Office & Quarters", client: "Bank of India", location: "Lucknow, U.P.", value: "₹48.35 Cr", category: "Buildings", status: "Completed" },
-  { name: "Underpass at NH-28 (Lucknow-Faizabad)", client: "NHAI", location: "Lucknow, U.P.", value: "₹47.13 Cr", category: "Roads & Bridges", status: "Completed" },
-  { name: "Sky Walk at Shastri Chowk", client: "PWD Bridge Const. Div.", location: "Raipur, Chhattisgarh", value: "₹42.55 Cr", category: "Roads & Bridges", status: "Completed" },
-  { name: "Bahraich Bypass NH-28C (NHDP-IV)", client: "PWD NH Div. Lucknow", location: "Bahraich, U.P.", value: "₹43.48 Cr", category: "Roads & Bridges", status: "Completed" },
+// Demo images grouped by category (Unsplash). Replace with real photos when available.
+const categoryImages: Record<Exclude<Category, "All">, string[]> = {
+  Railway: [
+    "https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=1200&q=70",
+    "https://images.unsplash.com/photo-1517242810446-cc8951b2be40?auto=format&fit=crop&w=1200&q=70",
+    "https://images.unsplash.com/photo-1583116716552-ed3492052206?auto=format&fit=crop&w=1200&q=70",
+  ],
+  Buildings: [
+    "https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=1200&q=70",
+    "https://images.unsplash.com/photo-1496564203457-11bb12075d90?auto=format&fit=crop&w=1200&q=70",
+    "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=70",
+    "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=70",
+  ],
+  "Roads & Bridges": [
+    "https://images.unsplash.com/photo-1545158535-c3f7168c28b6?auto=format&fit=crop&w=1200&q=70",
+    "https://images.unsplash.com/photo-1474044159687-1ee9f3a51722?auto=format&fit=crop&w=1200&q=70",
+    "https://images.unsplash.com/photo-1473221326025-9183b464bb7e?auto=format&fit=crop&w=1200&q=70",
+    "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1200&q=70",
+  ],
+  Institutional: [
+    "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1200&q=70",
+    "https://images.unsplash.com/photo-1599687351724-dfa3c4ff81b1?auto=format&fit=crop&w=1200&q=70",
+    "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1200&q=70",
+  ],
+};
+
+function pickImage(category: Exclude<Category, "All">, index: number) {
+  const pool = categoryImages[category];
+  return pool[index % pool.length];
+}
+
+const baseProjects: Omit<Project, "image">[] = [
+  { name: "Kashi Railway Station Redevelopment", client: "Indian Railways", location: "Kashi, U.P.", category: "Railway", status: "In Progress" },
+  { name: "Jalna Railway Station", client: "Indian Railways", location: "Jalna, Maharashtra", category: "Railway", status: "In Progress" },
+  { name: "Aurangabad Railway Station", client: "Indian Railways", location: "Aurangabad, Maharashtra", category: "Railway", status: "In Progress" },
+  { name: "Major Bridges 466/468/469 across Gomti", client: "Northern Railway", location: "Lucknow, U.P.", category: "Roads & Bridges", status: "In Progress" },
+  { name: "SN Medical College", client: "UPPWD", location: "Agra, U.P.", category: "Buildings", status: "In Progress" },
+  { name: "Veerangna Uda Devi Women Police Battalion", client: "UPPWD", location: "Lucknow, U.P.", category: "Institutional", status: "In Progress" },
+  { name: "State Fire-Fighting College", client: "UPPWD", location: "Unnao, U.P.", category: "Institutional", status: "In Progress" },
+  { name: "500-bed Advance Pediatric Center, SGPGI", client: "UPPWD", location: "Lucknow, U.P.", category: "Buildings", status: "In Progress" },
+  { name: "High Court Judges Residences", client: "UPPWD", location: "Lucknow & Prayagraj", category: "Buildings", status: "In Progress" },
+  { name: "Passenger Terminal Building, ICP Sunauli", client: "Land Ports Authority of India", location: "Sunauli, U.P.", category: "Institutional", status: "Completed" },
+  { name: "MBBS & Nursing Hostel, Dr RMLIMS", client: "UPPWD", location: "Lucknow, U.P.", category: "Buildings", status: "Completed" },
+  { name: "Pratapgarh Bypass", client: "UPPWD", location: "Pratapgarh, U.P.", category: "Roads & Bridges", status: "Completed" },
+  { name: "Widening to Four-Lane CC Road", client: "UPPWD", location: "Pratapgarh, U.P.", category: "Roads & Bridges", status: "Completed" },
+  { name: "Government Medical College", client: "UPRNN Ltd.", location: "Basti, U.P.", category: "Buildings", status: "Completed" },
+  { name: "Siddharthnagar University, Kapilvastu", client: "UPRNN Ltd.", location: "Siddharthnagar, U.P.", category: "Buildings", status: "Completed" },
+  { name: "High Court Conference Hall, VVIP Suite & Museum", client: "C&DS, UP Jal Nigam", location: "Prayagraj, U.P.", category: "Institutional", status: "Completed" },
+  { name: "Bank of India Zonal Office & Quarters", client: "Bank of India", location: "Lucknow, U.P.", category: "Buildings", status: "Completed" },
+  { name: "Underpass at NH-28 (Lucknow-Faizabad)", client: "NHAI", location: "Lucknow, U.P.", category: "Roads & Bridges", status: "Completed" },
+  { name: "Sky Walk at Shastri Chowk", client: "PWD Bridge Const. Div.", location: "Raipur, Chhattisgarh", category: "Roads & Bridges", status: "Completed" },
+  { name: "Bahraich Bypass NH-28C (NHDP-IV)", client: "PWD NH Div. Lucknow", location: "Bahraich, U.P.", category: "Roads & Bridges", status: "Completed" },
   { name: "Atal Residential Schools", client: "UPPWD", location: "Basti / Banda / Prayagraj", category: "Buildings", status: "Completed" },
   { name: "Forensic Science Labs", client: "UPPWD", location: "Ayodhya / Banda / Basti", category: "Institutional", status: "In Progress" },
-  { name: "Academic Block & Hostel Cluster, IIM Raipur", client: "RITES", location: "Raipur, Chhattisgarh", value: "₹183.44 Cr", category: "Buildings", status: "In Progress" },
-  { name: "Flyover across NH-30, Kamal Vihar", client: "PWD Bridge Const. Div.", location: "Raipur, Chhattisgarh", value: "₹19.90 Cr", category: "Roads & Bridges", status: "Completed" },
+  { name: "Academic Block & Hostel Cluster, IIM Raipur", client: "RITES", location: "Raipur, Chhattisgarh", category: "Buildings", status: "In Progress" },
+  { name: "Flyover across NH-30, Kamal Vihar", client: "PWD Bridge Const. Div.", location: "Raipur, Chhattisgarh", category: "Roads & Bridges", status: "Completed" },
 ];
+
+const counters: Record<Exclude<Category, "All">, number> = {
+  Railway: 0,
+  Buildings: 0,
+  "Roads & Bridges": 0,
+  Institutional: 0,
+};
+
+const projects: Project[] = baseProjects.map((p) => {
+  const image = pickImage(p.category, counters[p.category]++);
+  return { ...p, image };
+});
 
 const categories: Category[] = ["All", "Railway", "Buildings", "Roads & Bridges", "Institutional"];
 
@@ -87,30 +130,39 @@ function ProjectsPage() {
 
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((p) => (
-            <article key={p.name} className="flex flex-col rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
-              <div className="flex items-center justify-between">
-                <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-foreground/70">
-                  {p.category}
-                </span>
-                {p.status && (
-                  <span className={`text-xs font-semibold ${p.status === "Completed" ? "text-primary" : "text-accent"}`}>
-                    {p.status}
+            <article
+              key={p.name}
+              className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-[var(--shadow-card)] transition-shadow hover:shadow-[var(--shadow-elegant)]"
+            >
+              <div className="relative aspect-[16/10] overflow-hidden bg-secondary">
+                <img
+                  src={p.image}
+                  alt={p.name}
+                  loading="lazy"
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-x-0 top-0 flex items-center justify-between p-3">
+                  <span className="rounded-full bg-background/90 px-3 py-1 text-xs font-medium text-foreground backdrop-blur">
+                    {p.category}
                   </span>
-                )}
+                  {p.status && (
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-semibold text-primary-foreground ${
+                        p.status === "Completed" ? "bg-primary" : "bg-accent"
+                      }`}
+                    >
+                      {p.status}
+                    </span>
+                  )}
+                </div>
               </div>
-              <h3 className="mt-4 text-lg font-semibold leading-snug text-foreground">{p.name}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{p.client}</p>
-              <div className="mt-5 flex items-center gap-4 border-t border-border pt-4 text-sm text-foreground/75">
-                <div className="flex items-center gap-1.5">
+              <div className="flex flex-1 flex-col p-6">
+                <h3 className="text-lg font-semibold leading-snug text-foreground">{p.name}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">{p.client}</p>
+                <div className="mt-auto flex items-center gap-1.5 border-t border-border pt-4 text-sm text-foreground/75">
                   <MapPin className="h-4 w-4 text-accent" />
                   {p.location}
                 </div>
-                {p.value && (
-                  <div className="ml-auto flex items-center gap-1 font-semibold text-primary">
-                    <IndianRupee className="h-4 w-4" />
-                    {p.value.replace("₹", "")}
-                  </div>
-                )}
               </div>
             </article>
           ))}
