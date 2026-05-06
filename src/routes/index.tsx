@@ -32,8 +32,13 @@ function HomePage() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-[image:var(--gradient-hero)] text-primary-foreground">
         <div className="absolute inset-0 opacity-10 [background-image:radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:32px_32px]" />
+        <div className="absolute inset-0 opacity-70 mix-blend-screen pointer-events-none">
+          <Hero3D />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/80 via-primary/40 to-transparent pointer-events-none" />
         <div className="relative mx-auto max-w-7xl px-4 py-24 lg:px-8 lg:py-36">
           <div className="max-w-3xl">
+
             <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium uppercase tracking-wider backdrop-blur">
               <span className="h-1.5 w-1.5 rounded-full bg-accent" /> Leading EPC Player
             </div>
