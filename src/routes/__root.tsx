@@ -61,10 +61,12 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  const matches = useMatches();
+  const key = matches[matches.length - 1]?.pathname ?? "/";
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader />
-      <main className="flex-1">
+      <main key={key} className="flex-1 animate-page-in">
         <Outlet />
       </main>
       <SiteFooter />
