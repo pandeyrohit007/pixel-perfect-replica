@@ -32,10 +32,10 @@ function HomePage() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-[image:var(--gradient-hero)] text-primary-foreground">
         <div className="absolute inset-0 opacity-10 [background-image:radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:32px_32px]" />
-        <div className="absolute inset-0 opacity-70 mix-blend-screen pointer-events-none">
-          <Hero3D />
+        <div className="absolute inset-0 opacity-80 text-white pointer-events-none">
+          <BuildingAnimation />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/80 via-primary/40 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/85 via-primary/50 to-transparent pointer-events-none" />
         <div className="relative mx-auto max-w-7xl px-4 py-24 lg:px-8 lg:py-36">
           <div className="max-w-3xl">
 
