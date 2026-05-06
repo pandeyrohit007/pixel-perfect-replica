@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Building2, Train, Construction, Factory, CheckCircle2, TrendingUp, Award, Users } from "lucide-react";
+import { Hero3D } from "@/components/hero-3d";
 
 export const Route = createFileRoute("/")({
   head: () => ({
