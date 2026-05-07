@@ -130,23 +130,39 @@ function ProjectsPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
-        <div className="flex flex-wrap gap-2">
-          {categories.map((c) => (
-            <button
-              key={c}
-              onClick={() => setActive(c)}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-                active === c
-                  ? "bg-primary text-primary-foreground"
-                  : "border border-border bg-card text-foreground hover:bg-secondary"
-              }`}
-            >
-              {c}
-            </button>
-          ))}
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-wrap gap-2">
+            {categories.map((c) => (
+              <button
+                key={c}
+                onClick={() => setActive(c)}
+                className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                  active === c
+                    ? "bg-primary text-primary-foreground"
+                    : "border border-border bg-card text-foreground hover:bg-secondary"
+                }`}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+          <div className="relative w-full lg:w-80">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search project, client or location"
+              className="w-full rounded-full border border-border bg-card py-2 pl-9 pr-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
+            />
+          </div>
         </div>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-4 text-sm text-muted-foreground">
+          Showing {filtered.length} of {projects.length} projects
+        </div>
+
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((p) => (
             <article
               key={p.name}
