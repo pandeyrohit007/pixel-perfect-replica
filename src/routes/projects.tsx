@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { MapPin } from "lucide-react";
+import { useMemo, useState } from "react";
+import { MapPin, Search } from "lucide-react";
+import { additionalProjects } from "@/data/additional-projects";
 
 export const Route = createFileRoute("/projects")({
   head: () => ({
@@ -88,7 +89,12 @@ const counters: Record<Exclude<Category, "All">, number> = {
   Institutional: 0,
 };
 
-const projects: Project[] = baseProjects.map((p) => {
+const seenNames = new Set(baseProjects.map((p) => p.name.toLowerCase()));
+const extras: Omit<Project, "image">[] = additionalProjects
+  .filter((p) => !seenNames.has(p.name.toLowerCase()))
+  .map((p) => ({ ...p }));
+
+const projects: Project[] = [...baseProjects, ...extras].map((p) => {
   const image = pickImage(p.category, counters[p.category]++);
   return { ...p, image };
 });
@@ -97,7 +103,19 @@ const categories: Category[] = ["All", "Railway", "Buildings", "Roads & Bridges"
 
 function ProjectsPage() {
   const [active, setActive] = useState<Category>("All");
-  const filtered = active === "All" ? projects : projects.filter((p) => p.category === active);
+  const [query, setQuery] = useState("");
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return projects.filter((p) => {
+      if (active !== "All" && p.category !== active) return false;
+      if (!q) return true;
+      return (
+        p.name.toLowerCase().includes(q) ||
+        p.client.toLowerCase().includes(q) ||
+        p.location.toLowerCase().includes(q)
+      );
+    });
+  }, [active, query]);
 
   return (
     <>
@@ -112,23 +130,39 @@ function ProjectsPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
-        <div className="flex flex-wrap gap-2">
-          {categories.map((c) => (
-            <button
-              key={c}
-              onClick={() => setActive(c)}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-                active === c
-                  ? "bg-primary text-primary-foreground"
-                  : "border border-border bg-card text-foreground hover:bg-secondary"
-              }`}
-            >
-              {c}
-            </button>
-          ))}
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-wrap gap-2">
+            {categories.map((c) => (
+              <button
+                key={c}
+                onClick={() => setActive(c)}
+                className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                  active === c
+                    ? "bg-primary text-primary-foreground"
+                    : "border border-border bg-card text-foreground hover:bg-secondary"
+                }`}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+          <div className="relative w-full lg:w-80">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search project, client or location"
+              className="w-full rounded-full border border-border bg-card py-2 pl-9 pr-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
+            />
+          </div>
         </div>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-4 text-sm text-muted-foreground">
+          Showing {filtered.length} of {projects.length} projects
+        </div>
+
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((p) => (
             <article
               key={p.name}
