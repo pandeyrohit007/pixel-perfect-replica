@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Briefcase, Send, CheckCircle2, Upload } from "lucide-react";
+import { Briefcase, Send, CheckCircle2, Upload, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/careers")({
   head: () => ({
