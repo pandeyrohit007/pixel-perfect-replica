@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Mail, Phone, MapPin, Send, CheckCircle2 } from "lucide-react";
+import { Mail, Phone, MapPin, Send, CheckCircle2, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -14,6 +16,33 @@ export const Route = createFileRoute("/contact")({
 
 function ContactPage() {
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const payload = {
+      name: String(fd.get("name") || "").trim(),
+      email: String(fd.get("email") || "").trim(),
+      phone: String(fd.get("phone") || "").trim() || null,
+      company: String(fd.get("company") || "").trim() || null,
+      subject: String(fd.get("subject") || "").trim() || null,
+      message: String(fd.get("message") || "").trim(),
+    };
+    if (!payload.name || !payload.email || !payload.message) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase.from("contact_submissions").insert(payload);
+    setLoading(false);
+    if (error) {
+      toast.error("Could not send message. Please try again.");
+      return;
+    }
+    setSent(true);
+  }
+
   return (
     <>
       <section className="bg-[image:var(--gradient-hero)] text-primary-foreground">
@@ -42,10 +71,7 @@ function ContactPage() {
         </div>
 
         <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            setSent(true);
-          }}
+          onSubmit={handleSubmit}
           className="lg:col-span-3 rounded-2xl border border-border bg-card p-8 shadow-[var(--shadow-card)]"
         >
           <h2 className="text-2xl font-bold text-foreground">Send us a message</h2>
@@ -69,18 +95,22 @@ function ContactPage() {
                 <Field label="Subject" name="subject" />
               </div>
               <div className="sm:col-span-2">
-                <label className="text-sm font-medium text-foreground">Message</label>
+                <label className="text-sm font-medium text-foreground">Message <span className="text-destructive">*</span></label>
                 <textarea
+                  name="message"
                   required
                   rows={5}
+                  maxLength={5000}
                   className="mt-1.5 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 />
               </div>
               <button
                 type="submit"
-                className="sm:col-span-2 inline-flex items-center justify-center gap-2 rounded-md bg-[image:var(--gradient-accent)] px-6 py-3 text-sm font-semibold text-accent-foreground shadow-md hover:opacity-95"
+                disabled={loading}
+                className="sm:col-span-2 inline-flex items-center justify-center gap-2 rounded-md bg-[image:var(--gradient-accent)] px-6 py-3 text-sm font-semibold text-accent-foreground shadow-md hover:opacity-95 disabled:opacity-60"
               >
-                <Send className="h-4 w-4" /> Send Message
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                {loading ? "Sending..." : "Send Message"}
               </button>
             </div>
           )}

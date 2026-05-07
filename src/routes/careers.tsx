@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Briefcase, Send, CheckCircle2, Upload } from "lucide-react";
+import { Briefcase, Send, CheckCircle2, Upload, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/careers")({
   head: () => ({
@@ -16,6 +18,64 @@ export const Route = createFileRoute("/careers")({
 
 function CareersPage() {
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [fileName, setFileName] = useState<string | null>(null);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const name = String(fd.get("name") || "").trim();
+    const email = String(fd.get("email") || "").trim();
+    const phone = String(fd.get("phone") || "").trim();
+    const position = String(fd.get("position") || "").trim();
+    if (!name || !email || !phone || !position) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+    const expRaw = String(fd.get("experience") || "").trim();
+    const resumeFile = fd.get("resume") as File | null;
+    setLoading(true);
+
+    let resume_url: string | null = null;
+    if (resumeFile && resumeFile.size > 0) {
+      if (resumeFile.size > 5 * 1024 * 1024) {
+        setLoading(false);
+        toast.error("Resume must be under 5MB.");
+        return;
+      }
+      const ext = resumeFile.name.split(".").pop() || "pdf";
+      const path = `${crypto.randomUUID()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from("resumes").upload(path, resumeFile, {
+        contentType: resumeFile.type,
+        upsert: false,
+      });
+      if (upErr) {
+        setLoading(false);
+        toast.error("Could not upload resume. Please try again.");
+        return;
+      }
+      resume_url = path;
+    }
+
+    const { error } = await supabase.from("career_applications").insert({
+      name,
+      email,
+      phone,
+      experience: expRaw ? Number(expRaw) : null,
+      location: String(fd.get("location") || "").trim() || null,
+      position,
+      qualification: String(fd.get("qualification") || "").trim() || null,
+      cover_letter: String(fd.get("message") || "").trim() || null,
+      resume_url,
+    });
+    setLoading(false);
+    if (error) {
+      toast.error("Could not submit application. Please try again.");
+      return;
+    }
+    setSent(true);
+  }
+
   return (
     <>
       <section className="bg-[image:var(--gradient-hero)] text-primary-foreground">
@@ -56,10 +116,7 @@ function CareersPage() {
         </div>
 
         <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            setSent(true);
-          }}
+          onSubmit={handleSubmit}
           className="lg:col-span-3 rounded-2xl border border-border bg-card p-8 shadow-[var(--shadow-card)]"
         >
           <h2 className="text-2xl font-bold text-foreground">Apply Now</h2>
@@ -89,23 +146,32 @@ function CareersPage() {
                 <textarea
                   name="message"
                   rows={5}
+                  maxLength={5000}
                   className="mt-1.5 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                   placeholder="Tell us briefly about your experience and why you'd like to join us."
                 />
               </div>
               <div className="sm:col-span-2">
-                <label className="text-sm font-medium text-foreground">Upload Resume (PDF/DOC)</label>
+                <label className="text-sm font-medium text-foreground">Upload Resume (PDF/DOC, max 5MB)</label>
                 <label className="mt-1.5 flex cursor-pointer items-center justify-center gap-2 rounded-md border border-dashed border-input bg-background px-3 py-4 text-sm text-muted-foreground hover:bg-secondary">
                   <Upload className="h-4 w-4" />
-                  <span>Click to upload your resume</span>
-                  <input type="file" name="resume" accept=".pdf,.doc,.docx" className="hidden" />
+                  <span>{fileName ?? "Click to upload your resume"}</span>
+                  <input
+                    type="file"
+                    name="resume"
+                    accept=".pdf,.doc,.docx"
+                    className="hidden"
+                    onChange={(e) => setFileName(e.target.files?.[0]?.name ?? null)}
+                  />
                 </label>
               </div>
               <button
                 type="submit"
-                className="sm:col-span-2 inline-flex items-center justify-center gap-2 rounded-md bg-[image:var(--gradient-accent)] px-6 py-3 text-sm font-semibold text-accent-foreground shadow-md hover:opacity-95"
+                disabled={loading}
+                className="sm:col-span-2 inline-flex items-center justify-center gap-2 rounded-md bg-[image:var(--gradient-accent)] px-6 py-3 text-sm font-semibold text-accent-foreground shadow-md hover:opacity-95 disabled:opacity-60"
               >
-                <Send className="h-4 w-4" /> Submit Application
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                {loading ? "Submitting..." : "Submit Application"}
               </button>
             </div>
           )}
