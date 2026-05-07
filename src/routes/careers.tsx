@@ -18,6 +18,64 @@ export const Route = createFileRoute("/careers")({
 
 function CareersPage() {
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [fileName, setFileName] = useState<string | null>(null);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const name = String(fd.get("name") || "").trim();
+    const email = String(fd.get("email") || "").trim();
+    const phone = String(fd.get("phone") || "").trim();
+    const position = String(fd.get("position") || "").trim();
+    if (!name || !email || !phone || !position) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+    const expRaw = String(fd.get("experience") || "").trim();
+    const resumeFile = fd.get("resume") as File | null;
+    setLoading(true);
+
+    let resume_url: string | null = null;
+    if (resumeFile && resumeFile.size > 0) {
+      if (resumeFile.size > 5 * 1024 * 1024) {
+        setLoading(false);
+        toast.error("Resume must be under 5MB.");
+        return;
+      }
+      const ext = resumeFile.name.split(".").pop() || "pdf";
+      const path = `${crypto.randomUUID()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from("resumes").upload(path, resumeFile, {
+        contentType: resumeFile.type,
+        upsert: false,
+      });
+      if (upErr) {
+        setLoading(false);
+        toast.error("Could not upload resume. Please try again.");
+        return;
+      }
+      resume_url = path;
+    }
+
+    const { error } = await supabase.from("career_applications").insert({
+      name,
+      email,
+      phone,
+      experience: expRaw ? Number(expRaw) : null,
+      location: String(fd.get("location") || "").trim() || null,
+      position,
+      qualification: String(fd.get("qualification") || "").trim() || null,
+      cover_letter: String(fd.get("message") || "").trim() || null,
+      resume_url,
+    });
+    setLoading(false);
+    if (error) {
+      toast.error("Could not submit application. Please try again.");
+      return;
+    }
+    setSent(true);
+  }
+
   return (
     <>
       <section className="bg-[image:var(--gradient-hero)] text-primary-foreground">
