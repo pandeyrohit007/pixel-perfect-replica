@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { MapPin } from "lucide-react";
+import { useMemo, useState } from "react";
+import { MapPin, Search } from "lucide-react";
+import { additionalProjects } from "@/data/additional-projects";
 
 export const Route = createFileRoute("/projects")({
   head: () => ({
@@ -88,7 +89,12 @@ const counters: Record<Exclude<Category, "All">, number> = {
   Institutional: 0,
 };
 
-const projects: Project[] = baseProjects.map((p) => {
+const seenNames = new Set(baseProjects.map((p) => p.name.toLowerCase()));
+const extras: Omit<Project, "image">[] = additionalProjects
+  .filter((p) => !seenNames.has(p.name.toLowerCase()))
+  .map((p) => ({ ...p }));
+
+const projects: Project[] = [...baseProjects, ...extras].map((p) => {
   const image = pickImage(p.category, counters[p.category]++);
   return { ...p, image };
 });
@@ -97,7 +103,19 @@ const categories: Category[] = ["All", "Railway", "Buildings", "Roads & Bridges"
 
 function ProjectsPage() {
   const [active, setActive] = useState<Category>("All");
-  const filtered = active === "All" ? projects : projects.filter((p) => p.category === active);
+  const [query, setQuery] = useState("");
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return projects.filter((p) => {
+      if (active !== "All" && p.category !== active) return false;
+      if (!q) return true;
+      return (
+        p.name.toLowerCase().includes(q) ||
+        p.client.toLowerCase().includes(q) ||
+        p.location.toLowerCase().includes(q)
+      );
+    });
+  }, [active, query]);
 
   return (
     <>
