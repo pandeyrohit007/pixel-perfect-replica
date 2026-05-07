@@ -176,9 +176,6 @@ function CareersPage() {
             </div>
           )}
         </form>
-            </div>
-          )}
-        </form>
       </section>
     </>
   );
