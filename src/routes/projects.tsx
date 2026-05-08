@@ -2,6 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { MapPin, Search } from "lucide-react";
 import { additionalProjects } from "@/data/additional-projects";
+import womenPoliceBattalionImg from "@/assets/women-police-battalion.jpg";
+
+const projectImageOverrides: Record<string, string> = {
+  "veerangna uda devi women police battalion": womenPoliceBattalionImg,
+};
 
 export const Route = createFileRoute("/projects")({
   head: () => ({
@@ -95,7 +100,9 @@ const extras: Omit<Project, "image">[] = additionalProjects
   .map((p) => ({ ...p }));
 
 const projects: Project[] = [...baseProjects, ...extras].map((p) => {
-  const image = pickImage(p.category, counters[p.category]++);
+  const key = p.name.toLowerCase();
+  const override = Object.keys(projectImageOverrides).find((k) => key.includes(k));
+  const image = override ? projectImageOverrides[override] : pickImage(p.category, counters[p.category]++);
   return { ...p, image };
 });
 
