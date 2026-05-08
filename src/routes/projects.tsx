@@ -2,6 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { MapPin, Search } from "lucide-react";
 import { additionalProjects } from "@/data/additional-projects";
+import womenPoliceBattalionImg from "@/assets/women-police-battalion.jpg";
+
+const projectImageOverrides: Record<string, string> = {
+  "veerangna uda devi women police battalion": womenPoliceBattalionImg,
+};
 
 export const Route = createFileRoute("/projects")({
   head: () => ({
