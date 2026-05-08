@@ -18,9 +18,11 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-8">
         <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-[image:var(--gradient-hero)] text-primary-foreground font-bold">
-            GS
-          </div>
+          <img
+            src="https://res.cloudinary.com/djoqadjge/image/upload/v1778152667/company-logo_xu0vrj.png"
+            alt="G.S. Express Pvt. Ltd. logo"
+            className="h-10 w-auto"
+          />
           <div className="leading-tight">
             <div className="text-sm font-semibold text-foreground">G.S. Express</div>
             <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Pvt. Ltd.</div>
