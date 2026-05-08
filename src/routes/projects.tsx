@@ -3,12 +3,6 @@ import { useMemo, useState } from "react";
 import { MapPin, Search } from "lucide-react";
 import { additionalProjects } from "@/data/additional-projects";
 import womenPoliceBattalionImg from "@/assets/women-police-battalion.jpg";
-
-const projectImageOverrides: Record<string, string> = {
-  "veerangna uda devi women police battalion": womenPoliceBattalionImg,
-};
-
-import womenPoliceBattalionImg from "@/assets/women-police-battalion.jpg";
 import constructionRailway1 from "@/assets/construction-railway-1.jpg";
 import constructionRailway2 from "@/assets/construction-railway-2.jpg";
 import constructionBuilding1 from "@/assets/construction-building-1.jpg";
