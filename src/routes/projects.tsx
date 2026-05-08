@@ -3,6 +3,14 @@ import { useMemo, useState } from "react";
 import { MapPin, Search } from "lucide-react";
 import { additionalProjects } from "@/data/additional-projects";
 import womenPoliceBattalionImg from "@/assets/women-police-battalion.jpg";
+import constructionRailway1 from "@/assets/construction-railway-1.jpg";
+import constructionRailway2 from "@/assets/construction-railway-2.jpg";
+import constructionBuilding1 from "@/assets/construction-building-1.jpg";
+import constructionBuilding2 from "@/assets/construction-building-2.jpg";
+import constructionRoad1 from "@/assets/construction-road-1.jpg";
+import constructionRoad2 from "@/assets/construction-road-2.jpg";
+import constructionInstitutional1 from "@/assets/construction-institutional-1.jpg";
+import constructionInstitutional2 from "@/assets/construction-institutional-2.jpg";
 
 const projectImageOverrides: Record<string, string> = {
   "veerangna uda devi women police battalion": womenPoliceBattalionImg,
@@ -29,30 +37,12 @@ interface Project {
   image: string;
 }
 
-// Demo images grouped by category (Unsplash). Replace with real photos when available.
+// Construction-in-progress photos by category.
 const categoryImages: Record<Exclude<Category, "All">, string[]> = {
-  Railway: [
-    "https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=1200&q=70",
-    "https://images.unsplash.com/photo-1517242810446-cc8951b2be40?auto=format&fit=crop&w=1200&q=70",
-    "https://images.unsplash.com/photo-1583116716552-ed3492052206?auto=format&fit=crop&w=1200&q=70",
-  ],
-  Buildings: [
-    "https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=1200&q=70",
-    "https://images.unsplash.com/photo-1496564203457-11bb12075d90?auto=format&fit=crop&w=1200&q=70",
-    "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=70",
-    "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=70",
-  ],
-  "Roads & Bridges": [
-    "https://images.unsplash.com/photo-1545158535-c3f7168c28b6?auto=format&fit=crop&w=1200&q=70",
-    "https://images.unsplash.com/photo-1474044159687-1ee9f3a51722?auto=format&fit=crop&w=1200&q=70",
-    "https://images.unsplash.com/photo-1473221326025-9183b464bb7e?auto=format&fit=crop&w=1200&q=70",
-    "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1200&q=70",
-  ],
-  Institutional: [
-    "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1200&q=70",
-    "https://images.unsplash.com/photo-1599687351724-dfa3c4ff81b1?auto=format&fit=crop&w=1200&q=70",
-    "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1200&q=70",
-  ],
+  Railway: [constructionRailway1, constructionRailway2],
+  Buildings: [constructionBuilding1, constructionBuilding2, constructionInstitutional2],
+  "Roads & Bridges": [constructionRoad1, constructionRoad2],
+  Institutional: [constructionInstitutional1, constructionInstitutional2, constructionBuilding1],
 };
 
 function pickImage(category: Exclude<Category, "All">, index: number) {
