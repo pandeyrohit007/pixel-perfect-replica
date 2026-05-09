@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { MapPin, Search, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin, Search, X } from "lucide-react";
 import { additionalProjects } from "@/data/additional-projects";
 import womenPoliceBattalionImg from "@/assets/women-police-battalion.jpg";
 import constructionRailway1 from "@/assets/construction-railway-1.jpg";
