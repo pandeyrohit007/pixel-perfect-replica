@@ -99,7 +99,7 @@ function CareersPage() {
             </div>
             <ul className="mt-4 space-y-3 text-sm text-foreground/80 leading-relaxed">
               <li>• Work on landmark railway, roads, bridges, and institutional projects across India</li>
-              <li>• Learn from industry veterans with decades of EPC experience</li>
+              <li>• Learn from industry veterans with decades of experience</li>
               <li>• Competitive compensation and clear growth paths</li>
               <li>• Site exposure across multiple states and disciplines</li>
             </ul>
