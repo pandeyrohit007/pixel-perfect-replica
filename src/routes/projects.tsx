@@ -220,48 +220,81 @@ function ProjectsPage() {
         </div>
       </section>
 
-      {lightbox && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 animate-fade-in"
-          onClick={() => setLightbox(null)}
-          role="dialog"
-          aria-modal="true"
-        >
-          <button
-            type="button"
-            onClick={() => setLightbox(null)}
-            className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white transition hover:bg-white/20"
-            aria-label="Close"
-          >
-            <X className="h-5 w-5" />
-          </button>
+      {lightbox && (() => {
+        const idx = filtered.findIndex((p) => p.name === lightbox.name);
+        const go = (delta: number) => {
+          if (filtered.length === 0) return;
+          const next = (idx + delta + filtered.length) % filtered.length;
+          setLightbox(filtered[next]);
+        };
+        return (
           <div
-            className="relative max-h-[90vh] max-w-5xl overflow-hidden rounded-xl bg-card shadow-2xl animate-scale-in"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 animate-fade-in"
+            onClick={() => setLightbox(null)}
+            role="dialog"
+            aria-modal="true"
+            onKeyDown={(e) => {
+              if (e.key === "ArrowRight") go(1);
+              if (e.key === "ArrowLeft") go(-1);
+            }}
+            tabIndex={-1}
           >
-            <img
-              src={lightbox.image}
-              alt={lightbox.name}
-              className="max-h-[75vh] w-full object-contain"
-            />
-            <div className="border-t border-border p-5">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="text-xl font-semibold text-foreground">{lightbox.name}</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">{lightbox.client}</p>
+            <button
+              type="button"
+              onClick={() => setLightbox(null)}
+              className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white transition hover:bg-white/20"
+              aria-label="Close"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            {filtered.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); go(-1); }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white transition hover:bg-white/20"
+                  aria-label="Previous"
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); go(1); }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white transition hover:bg-white/20"
+                  aria-label="Next"
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </button>
+              </>
+            )}
+            <div
+              className="relative max-h-[90vh] max-w-5xl overflow-hidden rounded-xl bg-card shadow-2xl animate-scale-in"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={lightbox.image}
+                alt={lightbox.name}
+                className="max-h-[75vh] w-full object-contain"
+              />
+              <div className="border-t border-border p-5">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-xl font-semibold text-foreground">{lightbox.name}</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">{lightbox.client}</p>
+                  </div>
+                  <span className="shrink-0 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-foreground">
+                    {lightbox.category}
+                  </span>
                 </div>
-                <span className="shrink-0 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-foreground">
-                  {lightbox.category}
-                </span>
-              </div>
-              <div className="mt-3 flex items-center gap-1.5 text-sm text-foreground/75">
-                <MapPin className="h-4 w-4 text-accent" />
-                {lightbox.location}
+                <div className="mt-3 flex items-center gap-1.5 text-sm text-foreground/75">
+                  <MapPin className="h-4 w-4 text-accent" />
+                  {lightbox.location}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </>
   );
 }
