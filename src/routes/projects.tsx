@@ -174,7 +174,7 @@ function ProjectsPage() {
           Showing {filtered.length} of {projects.length} projects
         </div>
 
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-2">
           {filtered.map((p) => (
             <article
               key={p.name}
@@ -183,7 +183,7 @@ function ProjectsPage() {
               <button
                 type="button"
                 onClick={() => setLightbox(p)}
-                className="relative aspect-[16/10] overflow-hidden bg-secondary text-left"
+                className="relative aspect-[4/3] overflow-hidden bg-secondary text-left"
                 aria-label={`Enlarge image of ${p.name}`}
               >
                 <img
