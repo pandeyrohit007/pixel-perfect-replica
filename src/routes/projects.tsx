@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { MapPin, Search } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { MapPin, Search, X } from "lucide-react";
 import { additionalProjects } from "@/data/additional-projects";
 import womenPoliceBattalionImg from "@/assets/women-police-battalion.jpg";
 import constructionRailway1 from "@/assets/construction-railway-1.jpg";
@@ -17,6 +17,9 @@ const projectImageOverrides: Record<string, string> = {
 };
 
 export const Route = createFileRoute("/projects")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    category: typeof search.category === "string" ? search.category : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Projects — G.S. Express Pvt. Ltd." },
@@ -99,8 +102,20 @@ const projects: Project[] = [...baseProjects, ...extras].map((p) => {
 const categories: Category[] = ["All", "Railway", "Buildings", "Roads & Bridges", "Institutional"];
 
 function ProjectsPage() {
-  const [active, setActive] = useState<Category>("All");
+  const { category: searchCategory } = Route.useSearch();
+  const initial: Category = (categories as string[]).includes(searchCategory ?? "")
+    ? (searchCategory as Category)
+    : "All";
+  const [active, setActive] = useState<Category>(initial);
   const [query, setQuery] = useState("");
+  const [lightbox, setLightbox] = useState<Project | null>(null);
+
+  useEffect(() => {
+    if (searchCategory && (categories as string[]).includes(searchCategory)) {
+      setActive(searchCategory as Category);
+    }
+  }, [searchCategory]);
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return projects.filter((p) => {
@@ -165,7 +180,12 @@ function ProjectsPage() {
               key={p.name}
               className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-[var(--shadow-card)] transition-shadow hover:shadow-[var(--shadow-elegant)]"
             >
-              <div className="relative aspect-[16/10] overflow-hidden bg-secondary">
+              <button
+                type="button"
+                onClick={() => setLightbox(p)}
+                className="relative aspect-[16/10] overflow-hidden bg-secondary text-left"
+                aria-label={`Enlarge image of ${p.name}`}
+              >
                 <img
                   src={p.image}
                   alt={p.name}
@@ -186,7 +206,7 @@ function ProjectsPage() {
                     </span>
                   )}
                 </div>
-              </div>
+              </button>
               <div className="flex flex-1 flex-col p-6">
                 <h3 className="text-lg font-semibold leading-snug text-foreground">{p.name}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">{p.client}</p>
@@ -199,6 +219,49 @@ function ProjectsPage() {
           ))}
         </div>
       </section>
+
+      {lightbox && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 animate-fade-in"
+          onClick={() => setLightbox(null)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <button
+            type="button"
+            onClick={() => setLightbox(null)}
+            className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white transition hover:bg-white/20"
+            aria-label="Close"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          <div
+            className="relative max-h-[90vh] max-w-5xl overflow-hidden rounded-xl bg-card shadow-2xl animate-scale-in"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={lightbox.image}
+              alt={lightbox.name}
+              className="max-h-[75vh] w-full object-contain"
+            />
+            <div className="border-t border-border p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h3 className="text-xl font-semibold text-foreground">{lightbox.name}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">{lightbox.client}</p>
+                </div>
+                <span className="shrink-0 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-foreground">
+                  {lightbox.category}
+                </span>
+              </div>
+              <div className="mt-3 flex items-center gap-1.5 text-sm text-foreground/75">
+                <MapPin className="h-4 w-4 text-accent" />
+                {lightbox.location}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

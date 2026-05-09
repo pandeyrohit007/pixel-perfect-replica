@@ -30,12 +30,24 @@ export function SiteFooter() {
         </div>
         <div>
           <h4 className="text-sm font-semibold uppercase tracking-wider opacity-80">Sectors</h4>
-          <ul className="mt-4 space-y-2 text-sm opacity-80">
-            <li>Roads & Highways</li>
-            <li>Bridges, Flyovers, ROBs & RUBs</li>
-            <li>Railway Infrastructure</li>
-            <li>Institutional Buildings</li>
-            <li>Urban Infrastructure</li>
+          <ul className="mt-4 space-y-2 text-sm">
+            {[
+              { label: "Roads & Highways", category: "Roads & Bridges" },
+              { label: "Bridges, Flyovers, ROBs & RUBs", category: "Roads & Bridges" },
+              { label: "Railway Infrastructure", category: "Railway" },
+              { label: "Institutional Buildings", category: "Institutional" },
+              { label: "Urban Infrastructure", category: "Buildings" },
+            ].map((s) => (
+              <li key={s.label}>
+                <Link
+                  to="/projects"
+                  search={{ category: s.category }}
+                  className="opacity-80 transition-opacity hover:opacity-100 hover:underline"
+                >
+                  {s.label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
         <div>

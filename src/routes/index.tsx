@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Building2, Train, Construction, Factory, CheckCircle2, TrendingUp, Award, Users } from "lucide-react";
 import { BuildingAnimation } from "@/components/building-animation";
+import { IndiaPresenceMap } from "@/components/india-presence-map";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -122,6 +123,9 @@ function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Geographical Presence */}
+      <IndiaPresenceMap />
 
       {/* Why us */}
       <section className="mx-auto max-w-7xl px-4 py-20 lg:px-8">
