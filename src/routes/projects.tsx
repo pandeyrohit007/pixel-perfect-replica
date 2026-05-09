@@ -183,7 +183,7 @@ function ProjectsPage() {
               <button
                 type="button"
                 onClick={() => setLightbox(p)}
-                className="relative aspect-[16/10] overflow-hidden bg-secondary text-left"
+                className="relative aspect-[4/3] overflow-hidden bg-secondary text-left"
                 aria-label={`Enlarge image of ${p.name}`}
               >
                 <img
