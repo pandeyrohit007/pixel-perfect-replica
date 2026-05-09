@@ -1,21 +1,21 @@
 import indiaMap from "@/assets/india-map.png";
 
-// Approximate percent positions on the india-map.png artwork.
+// Coordinates derived from real lat/lon mapped onto the india-map.png artwork bounds.
 const locations = [
-  { name: "Lucknow", state: "Uttar Pradesh", x: 48, y: 38 },
-  { name: "Agra", state: "Uttar Pradesh", x: 42, y: 38 },
-  { name: "Prayagraj", state: "Uttar Pradesh", x: 50, y: 42 },
-  { name: "Bahraich", state: "Uttar Pradesh", x: 50, y: 34 },
-  { name: "Pratapgarh", state: "Uttar Pradesh", x: 51, y: 41 },
-  { name: "Basti", state: "Uttar Pradesh", x: 54, y: 36 },
-  { name: "Aurangabad", state: "Maharashtra", x: 39, y: 60 },
-  { name: "Jalna", state: "Maharashtra", x: 41, y: 60 },
-  { name: "Raipur", state: "Chhattisgarh", x: 53, y: 56 },
-  { name: "Unnao", state: "Uttar Pradesh", x: 47, y: 39 },
-  { name: "Sunauli", state: "Uttar Pradesh", x: 55, y: 33 },
-  { name: "Siddharthnagar", state: "Uttar Pradesh", x: 55, y: 34 },
-  { name: "Ayodhya", state: "Uttar Pradesh", x: 51, y: 37 },
-  { name: "Banda", state: "Uttar Pradesh", x: 47, y: 43 },
+  { name: "Lucknow", state: "Uttar Pradesh", x: 44, y: 38 },
+  { name: "Agra", state: "Uttar Pradesh", x: 37, y: 37 },
+  { name: "Prayagraj", state: "Uttar Pradesh", x: 46, y: 42 },
+  { name: "Bahraich", state: "Uttar Pradesh", x: 46, y: 35 },
+  { name: "Pratapgarh", state: "Uttar Pradesh", x: 47, y: 40 },
+  { name: "Basti", state: "Uttar Pradesh", x: 49, y: 38 },
+  { name: "Ayodhya", state: "Uttar Pradesh", x: 47, y: 38 },
+  { name: "Unnao", state: "Uttar Pradesh", x: 43, y: 39 },
+  { name: "Banda", state: "Uttar Pradesh", x: 43, y: 41 },
+  { name: "Sunauli", state: "Uttar Pradesh", x: 50, y: 36 },
+  { name: "Siddharthnagar", state: "Uttar Pradesh", x: 49, y: 36 },
+  { name: "Aurangabad", state: "Maharashtra", x: 31, y: 58 },
+  { name: "Jalna", state: "Maharashtra", x: 32, y: 58 },
+  { name: "Raipur", state: "Chhattisgarh", x: 46, y: 54 },
 ];
 
 export function IndiaPresenceMap() {
